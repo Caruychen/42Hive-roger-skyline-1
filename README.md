@@ -19,3 +19,12 @@ sudo parted
 unit GB
 print list
 ```
+
+To keep the OS up to date, you will use the `apt-get` utility. This will need `sudo` installed first, so the update can only be done as root:
+```
+su	# Enters root user
+apt-get update -y && apt-get upgrade -y
+apt-get install sudo vim -y
+```
+`update` re-synchronizes the package index files from their sources.
+`upgrade` installs the newest versions of all packages currently installed on the system from the sources enumerated in `/etc/apt/sources.list`
