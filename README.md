@@ -56,3 +56,5 @@ First, add write permissions to the `/etc/sudoers` file. In the file under `# Us
  * The `bridged adapter` replicates another node on the physical network, so it ccan have an IP address on the same domain as the host. It will behave just like it was another machine on the same network as the host. 
  * https://www.quora.com/What-is-the-difference-between-NAT-Bridged-and-Host-Only-networking
  * https://www.nucleiotechnologies.com/what-is-the-difference-between-host-only-nat-bridged-networking-in-virtual-machine-box/
+
+2. Setting up a Static IP
