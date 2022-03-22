@@ -1,7 +1,7 @@
 # roger-skyline-1
 
 ## V.2 VM Part
-* Linux OS: Debian (64 bit)
+* Linux OS: Debian (64 Bit)
 * hypervisor: VirtualBox
 * Specified hard-disk size: 8.00 GB VDI (VirtualBox Disk Image) Fixed Size
 Once the VM is initialised, go to settings > storage to specify the image of the OS. I used debian-11.2.0-amd64-netinst.iso from https://www.debian.org/distrib/. 
