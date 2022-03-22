@@ -50,3 +50,9 @@ First, add write permissions to the `/etc/sudoers` file. In the file under `# Us
 ```
 [username] ALL=(ALL:ALL) ALL
 ```
+
+### We don't want you to use the DHCP service of your machine. You've got to configure it to have a static IP and a Netmask in \30
+1. We will use the `bridged adapter` for the VM's network settings. Go to VirtualBox settings > Network, and change the enabled network adapter to `bridged adapter`.
+ * The `bridged adapter` replicates another node on the physical network, so it ccan have an IP address on the same domain as the host. It will behave just like it was another machine on the same network as the host. 
+ * https://www.quora.com/What-is-the-difference-between-NAT-Bridged-and-Host-Only-networking
+ * https://www.nucleiotechnologies.com/what-is-the-difference-between-host-only-nat-bridged-networking-in-virtual-machine-box/
