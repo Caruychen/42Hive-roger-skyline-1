@@ -20,11 +20,33 @@ unit GB
 print list
 ```
 
-To keep the OS up to date, you will use the `apt-get` utility. This will need `sudo` installed first, so the update can only be done as root:
+To keep the OS up to date, you will use the `apt-get` utility as follows:
+```
+apt-get update -y && apt-get upgrade -y
+```
+`update` re-synchronizes the package index files from their sources.
+`upgrade` installs the newest versions of all packages currently installed on the system from the sources enumerated in `/etc/apt/sources.list`
+This will need `sudo` installed first, follow the steps in the section further down.
+
+## V.3 Network and Security Part
+
+### You must create a non-root user to connect to the machine and work
+A non-root user was already created during OS set up. To add another user, use the `adduser` utility.
+
+### Use sudo, with this user, to be able to perform operation requiring special rights.
+Sudo will need to be installed first, which can only be done as root. Make sure to update the packages to ensure you have the latest version.
 ```
 su	# Enters root user
 apt-get update -y && apt-get upgrade -y
 apt-get install sudo vim -y
 ```
-`update` re-synchronizes the package index files from their sources.
-`upgrade` installs the newest versions of all packages currently installed on the system from the sources enumerated in `/etc/apt/sources.list`
+exit root user by entering `exit`.
+
+The current user is not yet given sudo permissions however, and needs to be assigned as a sudoer. There are two ways to use this:
+* Using the command: `usermod -aG sudo [newuser]`.
+* You can also directly modify the `sudoers` file as root, if not `usermod` is not installed and you prefer not to install it.
+
+First, add write permissions to the `/etc/sudoers` file. In the file under `# User priviledges information`, add the new user under the root user with the following:
+```
+[username] ALL=(ALL:ALL) ALL
+```
