@@ -52,41 +52,26 @@ First, add write permissions to the `/etc/sudoers` file. In the file under `# Us
 ```
 
 ### We don't want you to use the DHCP service of your machine. You've got to configure it to have a static IP and a Netmask in \30
-1. We will configure our Virtual Machine with 2 Adapters. Adapter 1 will be attached to NAT (providing internet access to the virtual machine), Adapter 2 will attach to the host-only adapter which will allow the machines in the host network to communicate with each other. The Adapter 2 attached to the host-only adapter is where we assign the static IP addrress.
- * https://www.codesandnotes.be/2018/10/16/network-of-virtualbox-instances-with-static-ip-addresses-and-internet-access/
+1. We will configure a bridged adapter connection for the network settings. In the settings -> network, set the adaptor to bridged adapter. The bridged mode replicates another node on the physical network that the host is connected to. The VM will receive its own IP address, in this case, we are going to assign a static IP 10.12.203.42. The VM will be accessible by all computers on the host network.
+ * https://linuxconfig.org/how-to-setup-a-static-ip-address-on-debian-linux
  * https://www.quora.com/What-is-the-difference-between-NAT-Bridged-and-Host-Only-networking
  * https://www.nucleiotechnologies.com/what-is-the-difference-between-host-only-nat-bridged-networking-in-virtual-machine-box/
-
-2. VirtualBox configuration
- * We first need to create a host-only network. In the VirtualBox main window, go to Global Tools -> Host Network Manager and click on "create". This should create a network named "vboxnet0", disable the DHCP server for this network. and assign the following configurations for the adapter:
-   * IPv4 Address: 192.168.42.1
-   * IPv4 Network Mask: 255.255.255.252 (Ending in 252 is the \30 netmask: https://www.freecodecamp.org/news/subnet-cheat-sheet-24-subnet-mask-30-26-27-29-and-other-ip-address-cidr-network-references/)
- * Next the Virtual machine needs to be configured in Settings -> Network, as follows:
-   * Adapter 1 - attached to NAT
-   * Adapter 2 - attached to Host-only Adapter (this should automatically be assigned to the vboxnet0 host network we just made).
-
-3. Configure static IP address.
-  * The VM should be able to access the outside world as normal, but will also need to be configure with the static IP to allow host network communication. Edit teh file /etc/network/interfaces as follows:
+ 
+2. Edit the `/etc/network/interfaces` file to setup the primary network. Change the primary network line as below:
 ```
-# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
-source /etc/network/interfaces.d/*
-
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
 # The primary network interface
 auto enp0s3
-iface enp0s3 inet dhcp
-
-# The secondary network interface (Host-only adapter)
-auto enp0s8
-iface enp0s8 inet static
-	address 192.168.42.2
-	netmask 255.255.255.252
 ```
+
+3. Create an enp0s3 file in the directory `/etc/network/interfaces.d/` and add:
+```
+iface enp0s3 inet static
+	address 10.12.203.42
+	netmask 255.255.255.252
+	gateway 10.12.254.254
+```
+
+Note that since the VM is going to be on the same network as the host, assign an address as `10.1X.0.0`. Where X is the cluster. Choose an IP that is not already taken.
 
  * Restart the network service with `sudo service networking restart`. You can check that you have assigned the static IP using ifconfig
 
