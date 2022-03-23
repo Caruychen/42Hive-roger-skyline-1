@@ -59,7 +59,7 @@ First, add write permissions to the `/etc/sudoers` file. In the file under `# Us
 
 2. VirtualBox configuration
  * We first need to create a host-only network. In the VirtualBox main window, go to Global Tools -> Host Network Manager and click on "create". This should create a network named "vboxnet0", disable the DHCP server for this network. and assign the following configurations for the adapter:
-   * IPv4 Address: 192.168.10.42 (This can also be any IP address you prefer)
+   * IPv4 Address: 192.168.42.1
    * IPv4 Network Mask: 255.255.255.252 (Ending in 252 is the \30 netmask: https://www.freecodecamp.org/news/subnet-cheat-sheet-24-subnet-mask-30-26-27-29-and-other-ip-address-cidr-network-references/)
  * Next the Virtual machine needs to be configured in Settings -> Network, as follows:
    * Adapter 1 - attached to NAT
@@ -89,3 +89,20 @@ iface enp0s8 inet static
 ```
 
  * Restart the network service with `sudo service networking restart`. You can check that you have assigned the static IP using ifconfig
+
+### You have to change the default port of the SSH service by the one of your choice. SSH access HAS TO be done with publickeys. SSH root access SHOULD NOT be allowed directly, but with a user who can be root.
+Change the the sshd config file `/etc/ssh/sshd_config`. I changed the line `# Port 22` by uncommenting, and adding a custom number `4242`. Then restart the sshd service with:
+```
+sudo service sshd restart
+```
+With this, you can already login via ssh with `ssh caruy@192.168.42.2` -p 4242`.
+
+At this point, you are still loggin in via password. We now need to set up SSH access with public keys instead.
+
+From the terminal, if you don't already have an id_rsa, run `ssh-keygen` to generate a key pair. You can then install the public key on the Virtual Machine OS with the following syntax
+```
+ssh-copy-id [username]@[server IP address] -p [port number]
+```
+It will prompt you for a password. After it is successful, you should be able to log in without using a password.
+
+To disable the root login directly, edit the `/etc/ssh/sshd_config` file in the VM, chainging the `PermitRootLogin` setting to `no`
