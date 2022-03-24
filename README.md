@@ -93,4 +93,22 @@ It will prompt you for a password. After it is successful, you should be able to
 To disable the root login directly, edit the `/etc/ssh/sshd_config` file in the VM, chainging the `PermitRootLogin` setting to `no`
 
 ### You have to set the rules of your firewall on your server only with the services used outside the VM.
-We will be using Uncomplicated Firewall [UFW](https://help.ubuntu.com/community/UFW)
+We will be using Uncomplicated Firewall ([UFW](https://wiki.ubuntu.com/UncomplicatedFirewall)), to set up our firewall. UFW was developed to make `iptables` firewall configureation easier. 
+
+1. Install UFW with `sudo apt-get install ufw`. 
+2. Set up default policies to deny all incoming traffic, and allow all outgoing traffic. The default rules handle traffic that do not explicitly match any other rules.
+```
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+3. We need to explicitly allow the SSH connection, since the default rule as it is would deny any incoming ssh connection. Since we have configured a custom port for the SSH daemon with `4242`, we need to specify this:
+```
+sudo ufw allow 4242
+```
+4. Finally, enable the UFW to activate the firewall.
+```
+sudo ufw enable
+```
+For now, we won't enable any other connections such as HTTP on port `80` or HTTPS on port `443`. We might need to add these rules to be enabled in a later part. For more information on setting up the firewall: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-debian-10
+
+
