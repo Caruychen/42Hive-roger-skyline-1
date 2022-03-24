@@ -80,7 +80,7 @@ Change the the sshd config file `/etc/ssh/sshd_config`. I changed the line `# Po
 ```
 sudo service sshd restart
 ```
-With this, you can already login via ssh with `ssh caruy@192.168.42.2` -p 4242`.
+With this, you can already login via ssh with `ssh caruy@10.12.203.42` -p 4242`.
 
 At this point, you are still loggin in via password. We now need to set up SSH access with public keys instead.
 
@@ -91,3 +91,6 @@ ssh-copy-id [username]@[server IP address] -p [port number]
 It will prompt you for a password. After it is successful, you should be able to log in without using a password.
 
 To disable the root login directly, edit the `/etc/ssh/sshd_config` file in the VM, chainging the `PermitRootLogin` setting to `no`
+
+### You have to set the rules of your firewall on your server only with the services used outside the VM.
+We will be using Uncomplicated Firewall [UFW](https://help.ubuntu.com/community/UFW)
