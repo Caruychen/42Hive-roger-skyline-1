@@ -120,7 +120,8 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
 
 1. Setting up Apache2 web server (https://www.layerstack.com/resources/tutorials/Installing-Apache-server-on-Linux-Cloud-Servers):
 	* run `sudo apt-get install apache2`. Then test that the webserver is running by entering the http://[IP Address]/ into your browser. This should give you an Apache2 default webpage,the html for which is located at `/var/www/html/index.html`
-	Create local file sudo nano /etc/fail2ban/jail.d/jail-debian.local
+2. Create local file sudo nano /etc/fail2ban/jail.d/jail-debian.local
+```
   [DEFAULT]
   bantime  = 10m
   findtime  = 10m
@@ -144,10 +145,14 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
   findtime = 300
   bantime = 600
   action = iptables[name=HTTP, port=http, protocol=tcp]
-Create the filter: create file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
+```
+3. Create the filter: create file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
+```
   [Definition]
   failregex = ^<HOST> -.*"(GET|POST).*
   ignoreregex =
+```
+
 When a line in the service’s log file matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
 
 Restart service by sudo ufw reload and sudo service fail2ban restart to apply settings
