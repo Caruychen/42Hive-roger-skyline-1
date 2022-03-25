@@ -104,11 +104,19 @@ sudo ufw default allow outgoing
 3. We need to explicitly allow the SSH connection, since the default rule as it is would deny any incoming ssh connection. Since we have configured a custom port for the SSH daemon with `4242`, we need to specify this:
 ```
 sudo ufw allow 4242
+sudo ufw allow 80	# Allows http traffic
+sudo ufw allow 443	# Allows https traffic
 ```
 4. Finally, enable the UFW to activate the firewall.
 ```
 sudo ufw enable
 ```
-For now, we won't enable any other connections such as HTTP on port `80` or HTTPS on port `443`. We might need to add these rules to be enabled in a later part. For more information on setting up the firewall: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-debian-10
+For now, we won't enable any other connections such as HTTP on port `80` or HTTPS on port `443`. We might need to add these rules to be enabled in a later part. For more information about firewalls:
+* https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-debian-10
+* https://opensource.com/article/18/9/linux-iptables-firewalld
 
+### You have to set a DOS (Denial Of Service Attack) protection on your open ports of your VM.
+We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark tool (ab) to test whether our DOS protection is working. Note that apache2 also needs to be installed on your VM. Apache2 is the webserver software that will serve HTTP requests (https://www.wpbeginner.com/glossary/apache/)
 
+1. Setting up Apache2 web server (https://www.layerstack.com/resources/tutorials/Installing-Apache-server-on-Linux-Cloud-Servers):
+	* run `sudo apt-get install apache2`. Then test that the webserver is running by entering the http://[IP Address]/ into your browser. This should give you an Apache2 default webpage,the html for which is located at `/var/www/html/index.html`
