@@ -120,3 +120,40 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
 
 1. Setting up Apache2 web server (https://www.layerstack.com/resources/tutorials/Installing-Apache-server-on-Linux-Cloud-Servers):
 	* run `sudo apt-get install apache2`. Then test that the webserver is running by entering the http://[IP Address]/ into your browser. This should give you an Apache2 default webpage,the html for which is located at `/var/www/html/index.html`
+	Create local file sudo nano /etc/fail2ban/jail.d/jail-debian.local
+  [DEFAULT]
+  bantime  = 10m
+  findtime  = 10m
+  maxretry = 5
+
+  [sshd]
+  enabled = true
+  port = 50113
+  maxretry = 3
+  findtime = 300
+  bantime = 600
+  logpath = %(sshd_log)s
+  backend = %(sshd_backend)s
+
+  [http-get-dos]
+  enabled = true
+  port = http,https
+  filter = http-get-dos
+  logpath = /var/log/apache2/access.log
+  maxretry = 300
+  findtime = 300
+  bantime = 600
+  action = iptables[name=HTTP, port=http, protocol=tcp]
+Create the filter: create file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
+  [Definition]
+  failregex = ^<HOST> -.*"(GET|POST).*
+  ignoreregex =
+When a line in the service’s log file matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
+
+Restart service by sudo ufw reload and sudo service fail2ban restart to apply settings
+*command to debug fail2ban: /usr/bin/fail2ban-client -v -v start
+Activate fail2ban sudo systemctl enable fail2ban
+Check status of fail2ban: sudo systemctl status fail2ban
+*You can an also see the rules added by Fail2Ban by running the following command: sudo iptables -L
+Tested with failed ssh login attempts against 10.11.201.251 and checking that it shows on the log file: tail -f /var/log/fail2ban.log And by checking all of the banned ssh actions sudo fail2ban-client status sshd
+Tested to spam website (reduce maxretry first) and it should show on the log /var/log/fail2ban.log
