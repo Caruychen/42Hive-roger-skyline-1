@@ -153,11 +153,12 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
   ignoreregex =
 ```
 
-When a line in the service’s log file matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
+When a line in the service’s log file (`/var/log/apache2/access2.log`)matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
 
 4. Restart service by `sudo ufw reload` and `sudo service fail2ban restart` to apply settings
 	* command to debug fail2ban: /usr/bin/fail2ban-client -v -v start
 5. Activate fail2ban `sudo systemctl enable fail2ban`
 6. Check status of fail2ban: sudo systemctl status fail2ban
 	* You can an also see the rules added by Fail2Ban by running the following command: sudo iptables -L
-7. Tested with failed http login attempts and checking that it shows on the log file: tail -f /var/log/fail2ban.log And by checking all of the banned ssh actions sudo fail2ban-client status sshd
+7. Tested with slowloris using second virtual machine, with 150 sockets. After 300 attempts in 5m, the second VM's IP address is banned for 10 minutes.
+8. The fail2ban response to requests can be found in log file: tail -f /var/log/fail2ban.log And by checking all of the banned ssh actions sudo fail2ban-client status sshd
