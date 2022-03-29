@@ -149,7 +149,7 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
 3. Create the filter: create file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
 ```
   [Definition]
-  failregex = ^<HOST> -.*"(GET|POST).*
+  failregex = ^<HOST> -.*"GET.*
   ignoreregex =
 ```
 
