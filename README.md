@@ -111,7 +111,7 @@ sudo ufw allow 443	# Allows https traffic
 ```
 sudo ufw enable
 ```
-For now, we won't enable any other connections such as HTTP on port `80` or HTTPS on port `443`. We might need to add these rules to be enabled in a later part. For more information about firewalls:
+For more information about firewalls:
 * https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-debian-10
 * https://opensource.com/article/18/9/linux-iptables-firewalld
 
