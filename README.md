@@ -111,7 +111,7 @@ sudo ufw allow 443	# Allows https traffic
 ```
 sudo ufw enable
 ```
-For now, we won't enable any other connections such as HTTP on port `80` or HTTPS on port `443`. We might need to add these rules to be enabled in a later part. For more information about firewalls:
+For more information about firewalls:
 * https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-debian-10
 * https://opensource.com/article/18/9/linux-iptables-firewalld
 
@@ -149,19 +149,18 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
 3. Create the filter: create file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
 ```
   [Definition]
-  failregex = ^<HOST> -.*"(GET|POST).*
+  failregex = ^<HOST> -.*"GET.*
   ignoreregex =
 ```
 
-When a line in the service’s log file matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
-
-Restart service by sudo ufw reload and sudo service fail2ban restart to apply settings
-*command to debug fail2ban: /usr/bin/fail2ban-client -v -v start
-Activate fail2ban sudo systemctl enable fail2ban
-Check status of fail2ban: sudo systemctl status fail2ban
-*You can an also see the rules added by Fail2Ban by running the following command: sudo iptables -L
-Tested with failed ssh login attempts against 10.11.201.251 and checking that it shows on the log file: tail -f /var/log/fail2ban.log And by checking all of the banned ssh actions sudo fail2ban-client status sshd
-Tested to spam website (reduce maxretry first) and it should show on the log /var/log/fail2ban.log
+When a line in the service’s log file (`/var/log/apache2/access2.log`)matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
+4. Restart service by `sudo ufw reload` and `sudo service fail2ban restart` to apply settings
+	* command to debug fail2ban: /usr/bin/fail2ban-client -v -v start
+5. Activate fail2ban `sudo systemctl enable fail2ban`
+6. Check status of fail2ban: sudo systemctl status fail2ban
+	* You can an also see the rules added by Fail2Ban by running the following command: sudo iptables -L
+7. Tested with slowloris using second virtual machine, with 150 sockets. After 300 attempts in 5m, the second VM's IP address is banned for 10 minutes.
+8. The fail2ban response to requests can be found in log file: `tail -f /var/log/fail2ban.log` And by checking all of the banned http actions `sudo fail2ban-client status http-get-dos`
 
 ### You have to set a protection against scans on your VM’s open ports.
 Using Portsentry can be complementary to fail2ban. Portsentry blocks IP addresses that are aiming to identify open ports on the server: https://en-wiki.ikoula.com/en/To_protect_against_the_scan_of_ports_with_portsentry
