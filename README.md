@@ -162,3 +162,37 @@ Check status of fail2ban: sudo systemctl status fail2ban
 *You can an also see the rules added by Fail2Ban by running the following command: sudo iptables -L
 Tested with failed ssh login attempts against 10.11.201.251 and checking that it shows on the log file: tail -f /var/log/fail2ban.log And by checking all of the banned ssh actions sudo fail2ban-client status sshd
 Tested to spam website (reduce maxretry first) and it should show on the log /var/log/fail2ban.log
+
+### You have to set a protection against scans on your VM’s open ports.
+Using Portsentry can be complementary to fail2ban. Portsentry blocks IP addresses that are aiming to identify open ports on the server: https://en-wiki.ikoula.com/en/To_protect_against_the_scan_of_ports_with_portsentry
+1. Install Portsentry: sudo apt-get update -y && sudo apt-get install portsentry. Then stop the service while we configure porsentry `sudo service stop portsentry`.
+
+2. We will use portsentry in advanced mode for the TCP and UDP protocols, edit the `/etc/default/portsentry` file:
+```
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+3. We need to explicitly activate blocking with portsentry, so edit the section `Ignore Options` in `/etc/portsentry/portsentry.conf` such that:
+```
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+4. We will configure portsentry to drop routes using iptables. Incoming request packets from malicious IP addresses will be dropped using the `iptables` command with `DROP`. We are using linux, so will uncomment the line:
+```
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+5. the above line is the packet filter, which `portsentry.conf` mentions as the PREFERRED method, and we needed to explicitly uncomment it. The default method uses the route ccommand, and is supposedly the leaast optimal way of blocking and does not provide complete protection against UDP attacks. We can comment out the following line:
+```
+#KILL_ROUTE="/sbin/route add -host $TARGET$ reject"
+```
+
+6. restart the service and check its status:
+```
+sudo service portsentry start
+sudo service portsentry status
+```
+
+7. You can check open ports and which application is listening on what port by using `lsof -i`. Portsentry logs in the file `/var/log/syslog`, where you can see logs of any attacks. The following command also lists blocked IP addresses via iptables `sudo iptables -L -n -v`. 
+
+8. You can also test that portsentry has detected a port scan, by runningg `sudo nmap -v -A -sV 10.12.203.42` from another VM. the `/var/log/syslog` should who an `attackalert` from the attacking host IP, and subsequently dropping the packets from the attacker IP.
