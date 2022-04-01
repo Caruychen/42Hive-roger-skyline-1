@@ -260,4 +260,5 @@ fi
 
 ### Web Part
 #### You have to set a web server who should BE available on the VM’s IP or an host (init.login.com for exemple). About the packages of your web server, you can choose between Nginx and Apache. You have to set a self-signed SSL on all of your services.
-I have set up a web application that I made some time ago for this.
+We're using the wordle Rush project which was made in javascript for this part. It's a wordle game assistant.
+
