@@ -152,8 +152,8 @@ We will be using `fail2ban` to set-up DOS protection, and the Apache Benchmark t
   failregex = ^<HOST> -.*"GET.*
   ignoreregex =
 ```
+When a line in the service’s log file (`/var/log/apache2/access2.log`) matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
 
-When a line in the service’s log file (`/var/log/apache2/access2.log`)matches the failregex in its filter, the defined action is executed for that service. ignoreregex patterns to filter out what is normal server activity.
 4. Restart service by `sudo ufw reload` and `sudo service fail2ban restart` to apply settings
 	* command to debug fail2ban: /usr/bin/fail2ban-client -v -v start
 5. Activate fail2ban `sudo systemctl enable fail2ban`
