@@ -195,3 +195,28 @@ sudo service portsentry status
 7. You can check open ports and which application is listening on what port by using `lsof -i`. Portsentry logs in the file `/var/log/syslog`, where you can see logs of any attacks. The following command also lists blocked IP addresses via iptables `sudo iptables -L -n -v`. 
 
 8. You can also test that portsentry has detected a port scan, by runningg `sudo nmap -v -A -sV 10.12.203.42` from another VM. the `/var/log/syslog` should who an `attackalert` from the attacking host IP, and subsequently dropping the packets from the attacker IP.
+
+### Stop the services you don’t need for this project.
+1. We need to first discover every available unit file within the `systemd` paths, and filter for active service units that are enabled: `sudo systemctl list-unit-files --type=service | grep "enabled "`
+	* We include sudo as the state of the operating machine may be different if you are logged in as non-root user.
+	* `list-unit-files` shows all installed unit files, instead of units currently in memory as in `list units`
+	* `--type=service` makes sure we list active service unit types.
+	* We then grep for any units that are "enabled ". We leave a space, because we want to only check against the "STATE", otherwise we will also see those enabled from vendor preset which is not reflective of current state.
+
+2. We can then stop, and disable the services we do not need. Disabling the service will prevent it from starting automatically whenever the machine is launched.
+* `sudo systemctl stop [application].service`
+* `sudo systemctl disable [application].service`
+
+3. Below are the services we need for the project:
+```
+apache2.service		- Apache Hypertext Transfer Protocol (HTTP) Server
+apparmor.service	- kernel enhancement to confine programs to a limited set of resources
+cron.service		- daemon to execute scheduled commands (Vixie Cron)
+fail2ban.service	- a set of server and client programs to limit brute force authentication attempts
+getty@.service		- opens a tty port, prompts for login and invokes /bin/login command.
+networking.service	- raises or downs the network interfaces configured in /etc/network/interfaces
+rsyslog.service		- syslog server, for managing logs
+ssh.service			- OpenSSH remote login client
+systemd-timesyncd.service	- used to synchronize the local system clock with a remote network time protocol server.
+ufw.service					- for managing a netfilter firewall
+```
