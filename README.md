@@ -237,3 +237,23 @@ We store the script in `/usr/local/bin` as it is commonly for programs that a no
 0 4 * * 0 sudo /usr/local/bin/update_pkgs
 @reboot sudo /usr/local/bin/update_pkgs
 ```
+
+### Make a script to monitor changes of the /etc/crontab file and sends an email to root if it has been modified. Create a scheduled script task every day at midnight.
+1. We will need to install the `mailx` command line tool, run `sudo apt-get install mailutils`
+2. Create a script `/usr/local/bin/monitor_cron` with relevant permissions
+```
+#!/bin/bash
+if [ ! -e /etc/crontab.back ]
+then
+	exit 0
+fi
+DIFF=$(diff /etc/crontab /etc/crontab.back)
+sudo bash -c "cat /etc/crontab > /etc/crontab.back"
+if [ "$DIFF" != "" ]
+then
+	echo "crontab monitor: change detected, alerting root!"
+	echo "$DIFF" | mailx -s "crontab monitor: change detected" root
+fi
+```
+3. Add a task to the crontab `0 0 * * * sudo /usr/local/bin/monitor_cron`
+4. To read the mail, execut `mailx`
