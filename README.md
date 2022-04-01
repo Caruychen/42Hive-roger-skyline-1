@@ -222,3 +222,18 @@ ufw.service					- for managing a netfilter firewall
 ```
 
 ### Create a script that updates all the sources of package, then your packages and which logs the whole in a file named /var/log/update_script.log. Create a scheduled task for this script once a week at 4AM and every time the machine reboots.
+1. Create a script at `/usr/local/bin/update_pkgs
+```
+#!/bin/bash
+sudo apt-get update -y >> /var/log/update_script.log
+sudo apt-get upgrade -y >> /var/log/update_script.log
+```
+We store the script in `/usr/local/bin` as it is commonly for programs that a normal user can run: https://unix.stackexchange.com/questions/4186/what-is-usr-local-bin
+
+2. The file needs to be given execute permissions so: `sudo chmod +x /usr/local/bin/update_pkgs`.
+
+3. Update crontab file with `sudo crontab -e`, and add:
+```
+0 4 * * 0 sudo /usr/local/bin/update_pkgs
+@reboot sudo /usr/local/bin/update_pkgs
+```
