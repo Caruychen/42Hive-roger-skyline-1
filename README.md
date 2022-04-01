@@ -209,14 +209,16 @@ sudo service portsentry status
 
 3. Below are the services we need for the project:
 ```
-apache2.service		- Apache Hypertext Transfer Protocol (HTTP) Server
-apparmor.service	- kernel enhancement to confine programs to a limited set of resources
-cron.service		- daemon to execute scheduled commands (Vixie Cron)
-fail2ban.service	- a set of server and client programs to limit brute force authentication attempts
-getty@.service		- opens a tty port, prompts for login and invokes /bin/login command.
-networking.service	- raises or downs the network interfaces configured in /etc/network/interfaces
-rsyslog.service		- syslog server, for managing logs
-ssh.service			- OpenSSH remote login client
+apache2.service				- Apache Hypertext Transfer Protocol (HTTP) Server
+apparmor.service			- kernel enhancement to confine programs to a limited set of resources
+cron.service				- daemon to execute scheduled commands (Vixie Cron)
+fail2ban.service			- a set of server and client programs to limit brute force authentication attempts
+getty@.service				- opens a tty port, prompts for login and invokes /bin/login command.
+networking.service			- raises or downs the network interfaces configured in /etc/network/interfaces
+rsyslog.service				- syslog server, for managing logs
+ssh.service					- OpenSSH remote login client
 systemd-timesyncd.service	- used to synchronize the local system clock with a remote network time protocol server.
 ufw.service					- for managing a netfilter firewall
 ```
+
+### Create a script that updates all the sources of package, then your packages and which logs the whole in a file named /var/log/update_script.log. Create a scheduled task for this script once a week at 4AM and every time the machine reboots.
