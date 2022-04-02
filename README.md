@@ -262,3 +262,15 @@ fi
 #### You have to set a web server who should BE available on the VM’s IP or an host (init.login.com for exemple). About the packages of your web server, you can choose between Nginx and Apache. You have to set a self-signed SSL on all of your services.
 We're using the wordle Rush project which was made in javascript for this part. It's a wordle game assistant.
 
+1. We will first create the SSL certificate using the `openssl` command:
+```
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+```
+* openssl: The command line tool for creating and managing OpenSSL certificates, keys and other files.
+* req: subcommand that specifies we want to use X.509 certificat signing request management.
+* -x509: modifies the previous subcommand by telling the utility that we want to make a self-signed certificate.
+* -nodes: tells OpenSSL to skip the option to secure our certificate with a passphrase.
+* -days 365: specifies length of time that the certificate will be considered valid.
+* -newkey rsa:2048: Specifies that we want to generate a new certificate and a new key at the same time. The `rsa:2048` portion tells it to make an RSA key that is 2048 bits long.
+* -keyout: tells OpenSSL where to place the generated private key.
+* -out: tells OpenSSL where to place the certificate.
