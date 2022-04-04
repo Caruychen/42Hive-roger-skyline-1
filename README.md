@@ -330,4 +330,9 @@ Redirect "/" "https://[your_domain_or_IP/"
 	sudo systemctl reload apache2
 	```
 
-6. Testing encryption. You can test the encryption by entering `https://` followed by the domain or IP. You should get an error message in the browser stating `Your connection is not private`. This is to be expected, since we have only set up encryption. We don't yet have third party validation of our hosts's authenticity, which would require the browser to add us to the trusted certificate authorities. 
+6. Testing encryption. You can test the encryption by entering `https://` followed by the domain or IP. You should get an error message in the browser stating `Your connection is not private`. This is to be expected, since we have only set up encryption. We don't yet have third party validation of our hosts's authenticity, which would require the browser to add us to the trusted certificate authorities.  You can continue to proceed to the page, and will see the URL tab indicating `unsecure`. The connection is still encrypted however.
+
+7. You can change the Redirect to permanent, by modifying the following line in: `/etc/apache2/sites-available/000-default.conf`
+```
+Redirect permanent "/" "https://[domain_or_IP]/"
+```
