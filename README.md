@@ -274,3 +274,60 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/privat
 * -newkey rsa:2048: Specifies that we want to generate a new certificate and a new key at the same time. The `rsa:2048` portion tells it to make an RSA key that is 2048 bits long.
 * -keyout: tells OpenSSL where to place the generated private key.
 * -out: tells OpenSSL where to place the certificate.
+
+2. Create an Apache configuration snippet with strong encryption settings. We will set up a strong SSL cipher suite, with a snippet in the `/etc/apache2/conf-available` directory:
+```
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+SSLHonorCipherOrder On
+# Disable preloading HSTS for now.  You can use the commented out header line that includes
+# the "preload" directive if you understand the implications.
+# Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+# Requires Apache >= 2.4
+SSLCompression off
+SSLUseStapling on
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+# Requires Apache >= 2.4.11
+SSLSessionTickets Off
+```
+The `Strict-Transport-Security` header (HSTS) is disabled. While it provides increased security, there are far reaching implications, and complexities later on: https://hstspreload.appspot.com/
+
+3. Modify the default Apache SSL virtual host file `/etc/apache2/sites-available/default-ssl.conf`. First, we will make a backup of this file before changing it.
+```
+sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf.bak
+```
+We will need to modify the following lines in the file as below:
+```
+ServerAdmin [you_email@example.com]
+ServerName [server_domain_or_IP]
+SSLCertificateFile [/etc/ssl/certs/apache-selfsigned.crt
+SSLCertificateKeyFile [/etc/ssl/private/apache-selfsigned.key]
+```
+
+4. Modify the HTTP Host file to redirect to HTTPS. Since the server provides both unencrypted HTTP and encrypted HTTPS traffic, we can improve security by redirecting HTTP to HTTPS automatically. Modify the `/etc/apache2/sites-available/000-default.conf` file by adding a `Redirect` directive:
+```
+Redirect "/" "https://[your_domain_or_IP/"
+```
+
+5. Enable changes in Apache. We can enable the SSL and headers modules in apache, enable SSL-ready Virtual Host, and then restart apache to put these changes into effect.
+	* Enable `mod_ssl` (Apache SSL module) and `mod_headers` which is needed by some of hte settings in the SSL snippet above, with the `a2enmod` command (enables or disables apache2 modules):
+	```
+	sudo a2enmod ssl
+	sudo a2enmod headers
+	```
+	* enable SSL Virtual Host with a2ensite command:
+	```
+	sudo a2ensite default-ssl
+	```
+	* To check to make sure there are no syntax errors in our files:
+	```
+	sudo apache2ctl configtest
+	```
+	* As long as you get `Syntax OK`, then you should be fine. To activate the new configs, run:
+	```
+	sudo systemctl reload apache2
+	```
+
+6. Testing encryption. You can test the encryption by entering `https://` followed by the domain or IP. You should get an error message in the browser stating `Your connection is not private`. This is to be expected, since we have only set up encryption. We don't yet have third party validation of our hosts's authenticity, which would require the browser to add us to the trusted certificate authorities. 
