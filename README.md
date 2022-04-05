@@ -336,3 +336,7 @@ Redirect "/" "https://[your_domain_or_IP/"
 ```
 Redirect permanent "/" "https://[domain_or_IP]/"
 ```
+
+Instructions about setting up SSL learned from: https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-apache-in-debian-10
+
+### Propose a functional solution for deployment automation.
