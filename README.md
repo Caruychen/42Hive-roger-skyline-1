@@ -340,3 +340,16 @@ Redirect permanent "/" "https://[domain_or_IP]/"
 Instructions about setting up SSL learned from: https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-apache-in-debian-10
 
 ### Propose a functional solution for deployment automation.
+We set up a deployment script that will automatically patch updates to the contents in `/var/www/html/`. It will do so by running `diff` against the contents inside the relevant development directory, in this case `~/42Hive-wordle-assistant/assistant` with `/var/www/html`, and using the patch command to deploy updates:
+```
+#!/bin/bash
+DIFF=$(diff -ru ~/42Hive-wordle_assistant/assistant /var/www/html)
+if [ "$DIFF" != "" ];
+then
+	sudo sh -c 'diff -ru /var/www/html /home/caruy/42Hive-wordle_assistant/assistant > /var/www/html/web.patch'
+	sudo patch -d/var/www/html/ < /var/www/html/web.patch
+	sudo rm /var/www/html/web.patch
+else
+	echo "No changes detected"
+fi
+```
