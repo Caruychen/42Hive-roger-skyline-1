@@ -32,6 +32,22 @@ This will need `sudo` installed first, follow the steps in the section further d
 
 ### You must create a non-root user to connect to the machine and work
 A non-root user was already created during OS set up. To add another user, use the `adduser` utility.
+To create a new user
+```
+sudo useradd -m -d /home/username -s /bin/bash username
+# Add password
+passwd username
+
+# copy the contents of the suerr's public key into
+/home/username/.ssh/authorized_keys
+
+# ensure the directory ir owned by the new user
+chown -R username:username /home/username/.ssh
+
+# make sure only the new user has permissions
+chmod 700 /home/username/.ssh
+chmod 600 /home/username/.ssh/authorized_keys
+```
 
 ### Use sudo, with this user, to be able to perform operation requiring special rights.
 Sudo will need to be installed first, which can only be done as root. Make sure to update the packages to ensure you have the latest version.
