@@ -6,6 +6,8 @@
 * Specified hard-disk size: 8.00 GB VDI (VirtualBox Disk Image) Fixed Size
 Once the VM is initialised, go to settings > storage to specify the image of the OS. I used debian-11.2.0-amd64-netinst.iso from https://www.debian.org/distrib/. 
 
+To check Linux version `cat /etc/debian_version`. To check that Docker and Traefik not installed `sudo dpkg -l`
+
 Next, start up the virtual machine to begin setup. To create at least one 4.2 GB partition, pay attention to the `partition disks` stage of installation. Choose `Manual` as the partition method:
 
 I created 2 partitions:
